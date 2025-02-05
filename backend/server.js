@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: '',
+  origin: 'https://uwu-codegen-1.onrender.com',
   credentials: true
 }));
 app.use(bodyParser.json());
