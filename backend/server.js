@@ -20,6 +20,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+//test
+import prisma from "./db/db.config.js";
+app.get("/api/test-db", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    console.error("Database Error:", error);
+    res.status(500).json({ error: "Database connection failed" });
+  }
+});
+
+
 // Routes
 app.use('/api/user', userRoute);
 app.use('/api/post', postRoute);
