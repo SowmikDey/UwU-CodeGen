@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "build" : "npm install && prisma generate --backend/prisma/schema.prisma "
+    "build" : "prisma generate --schema prisma/schema.prisma && prisma migrate deploy --schema prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",

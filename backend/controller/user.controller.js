@@ -8,7 +8,7 @@ try {
 const {fname,mname,lname,email,password} = req.body;
 
 if(!fname || !lname || !email || !password){
-  res.status(400).json({message:"Fill All The Fields"})
+  return res.status(400).json({message:"Fill All The Fields"});
 }
 
 const existingUser = await prisma.user.findUnique({
@@ -18,7 +18,7 @@ const existingUser = await prisma.user.findUnique({
 })
 
 if(existingUser){
-  res.status(400).json({message:"User Already Exists"});
+  return res.status(400).json({message:"User Already Exists"});
 }
 
 if(password.length < 6){
@@ -48,10 +48,14 @@ if(newUser){
     email:newUser.email,
   })
 }else{
-  res.status(400).json({error:"Invalid Admin Data"})
+  return res.status(400).json({error:"Invalid User Data"});
  }
 
 } catch (error) {
+  if (error?.code === "P2002") {
+    return res.status(409).json({ error: "User Already Exists" });
+  }
+
   console.log("Error in signup", error);
     res.status(500).json({error: "Internal server error"});
 }
