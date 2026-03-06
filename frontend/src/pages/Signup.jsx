@@ -1,152 +1,137 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Signup = () => {
-    const [fname, setFirstName] = useState('');
-    const [lname, setLastName] = useState('');
-    const [mname, setMName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const navigate = useNavigate();
+  const [fname, setFirstName] = useState('');
+  const [lname, setLastName] = useState('');
+  const [mname, setMName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    const handleRegister = async() => {
-        const userData = {fname,mname,lname,email,password};
-
-        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/signup`, userData);
-
-        if(response.status == 201){
+  const handleRegister = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const userData = { fname, mname, lname, email, password };
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/signup`, userData);
+      if (response.status === 201) {
         navigate('/login');
-        }else{
-            console.log(response);
-        }
-    };
+      }
+    } catch (err) {
+      setError('Registration failed. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div className="min-w-screen min-h-screen bg-gray-900 flex items-center justify-center px-5 py-5">
-            <div className="bg-gray-100 text-gray-500  rounded-3xl border-black shadow-xl w-full overflow-hidden" style={{ maxWidth: '1000px' }}>
-                <div className="md:flex w-full">
-                    <div className="hidden md:block w-1/2 bg-black py-50 px-10  " 
-                > <div className="h-3/4 w-96 mt-16 object-scale-down bg-no-repeat" style={{
-                    backgroundImage: "url(https://cdn3d.iconscout.com/3d/premium/thumb/login-page-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--businessman-submit-form-business-pack-people-illustrations-4165667.png?f=webp)",
-                  }}>
+  const fields = [
+    { label: 'First Name', placeholder: 'John', value: fname, setter: setFirstName, half: true },
+    { label: 'Last Name', placeholder: 'Smith', value: lname, setter: setLastName, half: true },
+    { label: 'Middle Name', placeholder: 'Optional', value: mname, setter: setMName, half: false, optional: true },
+    { label: 'Email', placeholder: 'you@example.com', value: email, setter: setEmail, type: 'email', half: false },
+    { label: 'Password', placeholder: '••••••••••••', value: password, setter: setPassword, type: 'password', half: false },
+  ];
 
-                </div>
-                        </div>
-                    <div className="w-full md:w-1/2 py-10 px-5 md:px-10">
-                        <div className="text-center mb-10">
-                            <h1 className="font-bold text-3xl text-gray-900">SignUp</h1>
-                            <p>Enter your information to Signup</p>
-                        </div>
-                        <div>
-                            <div className="flex -mx-3">
-                                <div className="w-1/2 px-3 mb-5">
-                                    <label className="text-xs font-semibold px-1">First name</label>
-                                    <div className="flex">
-                                        <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
-                                            <i className="mdi mdi-account-outline text-gray-400 text-lg"></i>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            className="w-full -ml-10 pl-2 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
-                                            placeholder="John"
-                                            value={fname}
-                                            onChange={(e) => setFirstName(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                
-                                <div className="w-1/2 px-3 mb-5">
-                                    <label className="text-xs font-semibold px-1">Last name</label>
-                                    <div className="flex">
-                                        <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
-                                            <i className="mdi mdi-account-outline text-gray-400 text-lg"></i>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            className="w-full -ml-10 pl-2 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
-                                            placeholder="Smith"
-                                            value={lname}
-                                            onChange={(e) => setLastName(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-1/2 mb-5">
-                                    <label className="text-xs font-semibold px-1">Middle name</label>
-                                    <div className="flex">
-                                        <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
-                                            <i className="mdi mdi-account-outline text-gray-400 text-lg"></i>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            className="w-full -ml-10 pl-2 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
-                                            placeholder="Not Mandatory"
-                                            value={mname}
-                                            onChange={(e) => setMName(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            <div className="flex -mx-3">
-                                <div className="w-full px-3 mb-5">
-                                    <label className="text-xs font-semibold px-1">Email</label>
-                                    <div className="flex">
-                                        <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
-                                            <i className="mdi mdi-email-outline text-gray-400 text-lg"></i>
-                                        </div>
-                                        <input
-                                            type="email"
-                                            className="w-full -ml-10 pl-2 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
-                                            placeholder="johnsmith@example.com"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex -mx-3">
-                                <div className="w-full px-3 mb-12">
-                                    <label className="text-xs font-semibold px-1">Password</label>
-                                    <div className="flex">
-                                        <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
-                                            <i className="mdi mdi-lock-outline text-gray-400 text-lg"></i>
-                                        </div>
-                                        <input
-                                            type="password"
-                                            className="w-full -ml-10 pl-2 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
-                                            placeholder="************"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex -mx-3">
-                                <div className="w-full px-3 mb-5">
-                                    <button
-                                        onClick={handleRegister}
-                                        className="block w-full max-w-xs mx-auto bg-gray-800 hover:bg-black focus:bg-black text-white rounded-lg px-3 py-3 font-semibold"
-                                    >
-                                        REGISTER NOW
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="min-h-screen bg-[#050508] font-mono flex items-center justify-center px-4 py-10 relative overflow-hidden">
+      {/* Grid bg */}
+      <div className="fixed inset-0 pointer-events-none" style={{
+        backgroundImage: `linear-gradient(rgba(0,255,200,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,200,0.025) 1px, transparent 1px)`,
+        backgroundSize: '60px 60px'
+      }} />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Buy Me a Beer Button */}
-            <div className="flex items-end justify-end fixed bottom-0 right-0 mb-4 mr-4 z-10">
-                <div>
-                    <a title="Buy me a beer" href="https://www.buymeacoffee.com/scottwindon" target="_blank" rel="noopener noreferrer" className="block w-16 h-16 rounded-full transition-all shadow hover:shadow-lg transform hover:scale-110 hover:rotate-12">
-                        <img className="object-cover object-center w-full h-full rounded-full" src="https://i.pinimg.com/originals/60/fd/e8/60fde811b6be57094e0abc69d9c2622a.jpg" alt="Buy me a beer" />
-                    </a>
-                </div>
-            </div>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="relative z-10 w-full max-w-lg"
+      >
+        {/* Header */}
+        <div className="text-center mb-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-2xl font-black text-cyan-400 tracking-widest mb-2"
+          >
+            UWU_LANG
+          </motion.div>
+          <h1 className="text-3xl font-black text-white">Create Account</h1>
+          <p className="text-gray-500 text-sm mt-2">
+            Already a coder?{' '}
+            <Link to="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors">Sign In →</Link>
+          </p>
         </div>
-    );
+
+        {/* Form Card */}
+        <div className="rounded-2xl border border-cyan-900/40 bg-[#07070d] p-8 shadow-2xl shadow-cyan-900/10">
+          <div className="grid grid-cols-2 gap-4">
+            {fields.map((f, i) => (
+              <motion.div
+                key={f.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * i + 0.3 }}
+                className={f.half ? 'col-span-1' : 'col-span-2'}
+              >
+                <label className="text-xs text-gray-500 tracking-widest uppercase block mb-1.5">
+                  {f.label}
+                  {f.optional && <span className="ml-1 text-gray-700 normal-case">(optional)</span>}
+                </label>
+                <input
+                  type={f.type || 'text'}
+                  placeholder={f.placeholder}
+                  value={f.value}
+                  onChange={(e) => f.setter(e.target.value)}
+                  className="w-full bg-[#0a0a10] border border-cyan-900/30 text-white text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors placeholder-gray-700"
+                />
+              </motion.div>
+            ))}
+          </div>
+
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mt-4 text-red-400 text-xs p-3 rounded border border-red-900/40 bg-red-900/10"
+              >
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <motion.button
+            onClick={handleRegister}
+            disabled={loading}
+            whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(0,255,200,0.2)' }}
+            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="mt-6 w-full bg-cyan-500 text-black font-black py-3 rounded-lg text-sm tracking-wider hover:bg-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>⚙</motion.span>
+                Creating account...
+              </span>
+            ) : (
+              'REGISTER NOW →'
+            )}
+          </motion.button>
+        </div>
+      </motion.div>
+    </div>
+  );
 };
 
 export default Signup;

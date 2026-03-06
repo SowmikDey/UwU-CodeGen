@@ -1,319 +1,225 @@
-import React from "react";
-import { Link} from "react-router-dom";
-import { useRef } from "react"; // Import useRef from react
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
+
+const GlitchText = ({ text, className }) => (
+  <span className={`relative inline-block ${className}`} data-text={text}>
+    {text}
+  </span>
+);
+
+const FloatingParticle = ({ delay, x, y, size }) => (
+  <motion.div
+    className="absolute rounded-full bg-cyan-400 opacity-20"
+    style={{ left: `${x}%`, top: `${y}%`, width: size, height: size }}
+    animate={{ y: [0, -30, 0], opacity: [0.1, 0.4, 0.1] }}
+    transition={{ duration: 4 + delay, repeat: Infinity, ease: 'easeInOut', delay }}
+  />
+);
 
 const Landing = () => {
-   
-    const nextSectionRef = useRef(null);
-    const middleSectionRef = useRef(null);
+  const navigate = useNavigate();
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef });
+  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+
+  const features = [
+    { icon: '⚡', title: 'Instant Generation', desc: 'Convert any idea into UwU esolang code in milliseconds.' },
+    { icon: '🔮', title: 'AI-Powered', desc: 'Leverages cutting-edge Claude AI for flawless transformations.' },
+    { icon: '📜', title: 'Chat History', desc: 'All your generations saved and accessible anytime.' },
+    { icon: '🛡️', title: 'Secure Auth', desc: 'JWT-protected sessions keep your work private.' },
+  ];
+
   return (
-    <div className="bg-[#000000]">
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;1,100;1,200&display=swap"
-        rel="stylesheet"
-      />
+    <div className="min-h-screen bg-[#050508] text-white font-mono overflow-x-hidden">
+      {/* Animated grid background */}
+      <div className="fixed inset-0 pointer-events-none" style={{
+        backgroundImage: `linear-gradient(rgba(0,255,200,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,200,0.03) 1px, transparent 1px)`,
+        backgroundSize: '60px 60px'
+      }} />
 
-      <style>
-        {`
-                    section {
-                        font-family: "Poppins", sans-serif;
-                    }
-                `}
-      </style>
+      {/* Particles */}
+      {[...Array(15)].map((_, i) => (
+        <FloatingParticle key={i} delay={i * 0.3} x={Math.random() * 100} y={Math.random() * 100} size={Math.random() * 6 + 2} />
+      ))}
 
-      {/* Page Main */}
-      <main className="flex flex-col items-center font-Poppins justify-center mt-16">
-        <header className="container ">
-          {/* Navbar */}
-          <nav className="flex justify-between md:justify-around py-4 bg-gray-400/80 backdrop-blur-md shadow-md w-full px-10 fixed top-0 left-0 right-0 z-10 px-8 md:px-3">
-            {/* Logo Container */}
-            <div className="flex items-center">
-              {/* Logo */}
-              <Link className="cursor-pointer" to="/">
-                <h3 className="text-2xl font-medium text-black-500">
-                  {/* <img
-                    className="h-10"
-                    src="https://stackoverflow.design/assets/img/logos/so/logo-stackoverflow.svg"
-                    alt="Store Logo"
-                  /> */}
-                  UwU CodeGen
-                </h3>
-              </Link>
-            </div>
+      {/* Nav */}
+      <motion.nav
+        initial={{ y: -60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 border-b border-cyan-900/40 bg-[#050508]/80 backdrop-blur-md"
+      >
+        <motion.div className="text-xl font-bold tracking-widest text-cyan-400" whileHover={{ scale: 1.05 }}>
+          UWU<span className="text-white">_LANG</span>
+        </motion.div>
+        <div className="flex gap-4">
+          <motion.button
+            whileHover={{ scale: 1.05, borderColor: '#00ffe0' }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/login')}
+            className="px-5 py-2 border border-cyan-800 text-cyan-300 text-sm rounded hover:bg-cyan-900/20 transition-colors"
+          >
+            Sign In
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/signup')}
+            className="px-5 py-2 bg-cyan-500 text-black text-sm font-bold rounded hover:bg-cyan-400 transition-colors"
+          >
+            Get Started
+          </motion.button>
+        </div>
+      </motion.nav>
 
-            {/* Links Section */}
-            <div className="items-center text-sm md:space-x-8 justify-center justify-items-start md:justify-items-center md:flex md:pt-2 w-full left-0 top-16 px-15 md:px-10 py-3 md:py-0 border-t md:border-t-0">
-              <Link className="flex text-black hover:text-blue-500 cursor-pointer font-semibold transition-colors duration-300" to="/">Home</Link>
-              <Link
-              to="#Developers"
-              onClick={(e) => {
-                e.preventDefault();
-                nextSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-              }}
-                className="flex text-black hover:text-blue-500 cursor-pointer font-semibold transition-colors duration-300"
-              >
-                Developers
-              </Link>
-              <Link  to="#About"
-                onClick={(e) => {
-                    e.preventDefault(); 
-                    middleSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }}
-              className="flex text-black hover:text-blue-500 cursor-pointer font-semibold transition-colors duration-300">About Us</Link>
-            </div>
-
-            {/* Auth Links */}
-            <div className="flex items-center space-x-5 text-sm hidden md:flex">
-
-              {/* Login */}
-              <Link className="flex text-black text-sm cursor-pointer transition-colors duration-300 hover:text-blue-500 font-semibold text-black" to="/login">
-                <svg
-                  className="fill-current h-5 w-5 mr-2 mt-0.5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M10,17V14H3V10H10V7L15,12L10,17M10,2H19A2,2 0 0,1 21,4V20A2,2 0 0,1 19,22H10A2,2 0 0,1 8,20V18H10V20H19V4H10V6H8V4A2,2 0 0,1 10,2Z" />
-                </svg>
-                Login
-              </Link>
-            </div>
-
-            {/* Hamburger Menu */}
-            <button className="w-10 h-10 md:hidden justify-self-end rounded-full hover:bg-gray-100">
-              <svg
-                className="mx-auto"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-              >
-                <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
-              </svg>
-            </button>
-          </nav>
-        </header>
-
-        {/* Hero */}
-        <section className="flex flex-wrap items-center -mx-3 font-sans px-4 mx-auto w-full lg:max-w-screen-lg sm:max-w-screen-sm md:max-w-screen-md pt-28 pb-24">
-          {/* Column-1 */}
-          <div className="px-3 w-full lg:w-2/5">
-            <div className="mx-auto mb-8 max-w-lg text-center lg:mx-0 lg:max-w-md lg:text-left ">
-              <h2 className="mb-4 text-3xl text-white font-bold text-left lg:text-5xl">
-                Speak Naturally,
-                <span className="text-5xl text-blue-500 leading-relaxeds">Code </span>
-                UwU
-              </h2>
-
-              <p className="visible mx-0 mt-3 mb-0 text-sm leading-relaxed text-left text-slate-400">
-                Transform your thoughts into functional, fuzzy-wuzzy UwU programs with AI magic.
-              </p>
-            </div>
-
-            <div className="text-center lg:text-left">
-              <Link
-                to="/login"
-                className="block visible py-4 px-8 mb-4 text-xs font-semibold tracking-wide leading-none text-white bg-blue-500 rounded cursor-pointer sm:mr-3 sm:mb-0 sm:inline-block"
-              >
-                Try UwU
-              </Link>
-
-              <Link
-                to="/signup"
-                className="block visible py-4 px-8 text-xs font-semibold leading-none bg-white rounded border border-solid cursor-pointer sm:inline-block border-slate-200 text-slate-500"
-              >
-                Join Us
-              </Link>
-            </div>
-          </div>
-
-          {/* Column-2 */}
-          <div className="px-3 mb-12 w-full lg:mb-0 lg:w-3/5">
-            {/* Illustrations Container */}
-            <div
-              className="flex justify-center object-contain bg-center bg-no-repeat ml-28 items-center "
-              style={{
-                backgroundImage:
-                  "url(https://cdn1.iconfinder.com/data/icons/3d-web-design/512/11._Developer.png)",
-                backgroundSize: "contain", // Ensures the whole image fits
-                width: "100%",
-                height: "400px",
-              }}
-            ></div>
-          </div>
-        </section>
-        </main>
-        {/* Parallax Background */}
-        <section
-          className="flex flex-col w-full h-[500px] bg-cover bg-fixed bg-center flex justify-center items-center"
-          style={{
-            backgroundImage: "url(https://static.vecteezy.com/system/resources/previews/022/555/586/non_2x/3d-abstract-red-and-black-background-by-ai-generated-can-be-use-as-facebook-cover-free-photo.jpg)",
-          }}
+      {/* Hero */}
+      <motion.section ref={heroRef} style={{ y }} className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="mb-6 inline-flex items-center gap-2 px-4 py-1 border border-cyan-800 rounded-full text-cyan-500 text-xs tracking-widest uppercase"
         >
-          <h1 className="text-white text-5xl font-semibold mt-20 mb-10">
-            Describe. Generate. Run.
-          </h1>
+          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          AI-Powered Esolang Generator
+        </motion.div>
 
-          <span className="text-center font-bold my-20 text-white/90">
-            <Link
-              to="https://egoistdeveloper.github.io/twcss-to-sass-playground/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/90 hover:text-white"
-            >
-              Type Your Code
-            </Link>
-
-            <hr className="my-4" />
-
-            <Link
-              to="https://unsplash.com/photos/8Pm_A-OHJGg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/90 hover:text-white"
-            >
-              Instantly Generated, Perfectly Quirky
-            </Link>
-
-            <hr className="my-4" />
-
-            <p>
-              <Link
-                to="https://github.com/EgoistDeveloper/my-tailwind-components/blob/main/src/templates/parallax-landing-page.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/90 hover:text-white"
-              >
-                Run On Your Device
-              </Link>
-            </p>
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-6xl md:text-8xl font-black tracking-tight leading-none mb-6"
+        >
+          <span className="text-white">Code in</span>
+          <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+            UwU Lang
           </span>
-        </section>
+        </motion.h1>
 
-        {/* Content */}
-        <section className="p-10 space-y-8">
-          <h1 className="text-4xl text-center text-gray-500 my-20">Endless Possibilities with UwU Code</h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-gray-400 text-lg max-w-xl mb-10 leading-relaxed"
+        >
+          Transform your ideas into esoteric programming art. Fast, AI-driven, and utterly chaotic.
+        </motion.p>
 
-          <p className="text-white text-center">
-            Unleash your creativity with AI-generated UwU scripts! Whether you're building basic programs & loops to explore the fundamentals of this adorable esolang or crafting creative projects like text-based art and quirky logic puzzles, our AI-powered tool makes it effortless. Experiment with esolang logic, pushing the boundaries of unconventional programming, or dive into playful coding challenges to see what’s possible. From fun scripts to complex logic flows, the only limit is your imagination. Let AI transform your ideas into fully functional UwU programs—quickly, efficiently, and with creativity.
-          </p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="flex gap-4 flex-wrap justify-center"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0,255,200,0.3)' }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/signup')}
+            className="px-8 py-4 bg-cyan-500 text-black font-bold text-lg rounded hover:bg-cyan-400 transition-all"
+          >
+            Start Generating →
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/login')}
+            className="px-8 py-4 border border-cyan-800 text-cyan-300 font-medium text-lg rounded hover:bg-cyan-900/20 transition-all"
+          >
+            Sign In
+          </motion.button>
+        </motion.div>
 
-          <h1  className="text-2xl text-center text-gray-500 my-20">UwU Code, Made Simple & Fun!</h1>
-
-          <p ref={middleSectionRef} id="About" className="text-white text-center">
-            Tired of complex coding? Our AI-powered UwU Code Generator lets you create functional and quirky programs effortlessly! No syntax struggles—just describe what you need, and AI generates the perfect UwU script instantly. Whether you're a beginner exploring esolang or an expert experimenting with creative logic, our tool makes coding fast, fun, and accessible. Dive into the cutest way to program, unleash your imagination, and bring your ideas to life with ease. Start coding in UwU today—because programming should be playful, not painful!
-          </p>
-        </section>
-
-        <section  ref={nextSectionRef} id="Developers" className="pb-10">
-          <h1 className="text-2xl text-center text-gray-500 my-20">Developers</h1>
-          <div className="flex items-center justify-center gap-24">
-            <p className="text-white text-center">Sowmik Dey</p>
-            <p className="text-white text-center">Siddharth Kumar Mishra</p>
-            <p className="text-white text-center">Satyam Srivastava</p>
-            <p className="text-white text-center">Ujjwal Shahi</p>
+        {/* Terminal preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.8 }}
+          className="mt-16 w-full max-w-2xl rounded-xl border border-cyan-900/50 bg-[#0a0a10] overflow-hidden shadow-2xl shadow-cyan-900/20"
+        >
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-cyan-900/40 bg-[#0d0d15]">
+            <div className="w-3 h-3 rounded-full bg-red-500/70" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+            <div className="w-3 h-3 rounded-full bg-green-500/70" />
+            <span className="ml-2 text-xs text-gray-500 tracking-widest">uwu_generator.py</span>
           </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="bg-gray-800 pt-10 sm:mt-10 pt-10 w-full font-Poppins">
-          <div className="max-w-6xl m-auto text-gray-800 flex flex-wrap justify-left">
-            {/* Col-1 */}
-            <div className="p-5 w-1/2 sm:w-4/12 md:w-3/12">
-              {/* Col Title */}
-              <div className="text-xs uppercase text-gray-400 font-medium mb-6">
-                Getting Started
-              </div>
-
-              {/* Links */}
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Installation</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Release Notes</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Upgrade Guide</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Using with Preprocessors</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Optimizing for Production</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Browser Support</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">IntelliSense</Link>
-            </div>
-
-            {/* Col-2 */}
-            <div className="p-5 w-1/2 sm:w-4/12 md:w-3/12">
-              {/* Col Title */}
-              <div className="text-xs uppercase text-gray-400 font-medium mb-6">
-                Core Concepts
-              </div>
-
-              {/* Links */}
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Utility-First</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Responsive Design</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Hover, Focus, & Other States</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Dark Mode</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Adding Base Styles</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Extracting Components</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Adding New Utilities</Link>
-            </div>
-
-            {/* Col-3 */}
-            <div className="p-5 w-1/2 sm:w-4/12 md:w-3/12">
-              {/* Col Title */}
-              <div className="text-xs uppercase text-gray-400 font-medium mb-6">
-                Customization
-              </div>
-
-              {/* Links */}
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Configuration</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Theme Configuration</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Breakpoints</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Customizing Colors</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Customizing Spacing</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Configuring Variants</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Plugins</Link>
-            </div>
-
-            {/* Col-4 */}
-            <div className="p-5 w-1/2 sm:w-4/12 md:w-3/12">
-              {/* Col Title */}
-              <div className="text-xs uppercase text-gray-400 font-medium mb-6">
-                Community
-              </div>
-
-              {/* Links */}
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">GitHub</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Discord</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">Twitter</Link>
-              <Link to="#" className="my-3 block text-gray-300 hover:text-gray-100 text-sm font-medium duration-700">YouTube</Link>
-            </div>
+          <div className="p-6 text-left text-sm leading-relaxed">
+            <p className="text-gray-500"># Input: print("Hello World")</p>
+            <p className="text-cyan-400 mt-2">{'>'} Generating UwU code...</p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.5, duration: 0.5 }}
+            >
+              <p className="text-emerald-400 mt-2">pwint("hewwo wowwd~ (◕‿◕✿)")</p>
+              <p className="text-emerald-400">nuzzwe_output(sys.stdout)</p>
+              <p className="text-emerald-400">OwO_flush() # ✨ done!</p>
+            </motion.div>
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+              className="text-cyan-400"
+            >▊</motion.span>
           </div>
+        </motion.div>
+      </motion.section>
 
-          {/* Copyright Bar */}
-          <div className="pt-2">
-            <div className="flex pb-5 px-3 m-auto pt-5 border-t border-gray-500 text-gray-400 text-sm flex-col md:flex-row max-w-6xl">
-              <div className="mt-2">© Copyright 2025-year. All Rights Reserved.</div>
+      {/* Features */}
+      <section className="py-32 px-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <p className="text-cyan-500 text-xs tracking-widest uppercase mb-3">Why UwU_Lang</p>
+          <h2 className="text-4xl font-black text-white">Built Different</h2>
+        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          {features.map((f, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5, borderColor: 'rgba(0,255,200,0.4)' }}
+              className="p-6 border border-cyan-900/30 rounded-xl bg-[#0a0a10] hover:bg-[#0d0d18] transition-all cursor-default"
+            >
+              <div className="text-3xl mb-4">{f.icon}</div>
+              <h3 className="font-bold text-white mb-2 text-sm tracking-wide">{f.title}</h3>
+              <p className="text-gray-500 text-xs leading-relaxed">{f.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
-              {/* Required Unicons (if you want) */}
-              <div className="md:flex-auto md:flex-row-reverse mt-2 flex-row flex">
-                <Link to="#" className="w-6 mx-1">
-                  <i className="uil uil-facebook-f"></i>
-                </Link>
-                <Link to="#" className="w-6 mx-1">
-                  <i className="uil uil-twitter-alt"></i>
-                </Link>
-                <Link to="#" className="w-6 mx-1">
-                  <i className="uil uil-youtube"></i>
-                </Link>
-                <Link to="#" className="w-6 mx-1">
-                  <i className="uil uil-linkedin"></i>
-                </Link>
-                <Link to="#" className="w-6 mx-1">
-                  <i className="uil uil-instagram"></i>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </footer>
-      </div>
+      {/* CTA */}
+      <section className="py-24 px-6 text-center border-t border-cyan-900/20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-4xl font-black mb-4">Ready to go UwU?</h2>
+          <p className="text-gray-500 mb-8">Join the chaos. Sign up free.</p>
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(0,255,200,0.3)' }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/signup')}
+            className="px-10 py-4 bg-cyan-500 text-black font-black text-lg rounded hover:bg-cyan-400 transition-all"
+          >
+            Create Account →
+          </motion.button>
+        </motion.div>
+      </section>
+
+      <footer className="py-8 border-t border-cyan-900/20 text-center text-gray-600 text-xs tracking-widest">
+        UWU_LANG © 2025 — AI-Powered Esolang
+      </footer>
+    </div>
   );
 };
 
