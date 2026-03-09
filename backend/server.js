@@ -32,6 +32,11 @@ app.get("/api/test-db", async (req, res) => {
   }
 });
 
+//health check
+app.get("/health",(req,res)=>{
+res.send("Backend is Healthy");
+})
+
 
 // Routes
 app.use('/api/user', userRoute);
